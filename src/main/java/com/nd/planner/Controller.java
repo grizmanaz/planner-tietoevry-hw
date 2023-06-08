@@ -1,15 +1,16 @@
 package com.nd.planner;
 
+import com.nd.planner.config.Constant;
 import com.nd.planner.model.Day;
 import com.nd.planner.model.Request;
 import com.nd.planner.model.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -17,24 +18,8 @@ import java.util.*;
 @RequestMapping("/api")
 public class Controller {
 
-    private static final int MAX_AWAKE_HOURS = 16;
-    private static final int PERSONAL_TIME = 8;
-    private static final int MAX_WORK_HOURS = MAX_AWAKE_HOURS - PERSONAL_TIME;
-    private static final Map<DayOfWeek, Integer> JOB_HOURS_PER_DAY_OF_WEEK = Map.of(
-            DayOfWeek.MONDAY, 5,
-            DayOfWeek.TUESDAY, 4,
-            DayOfWeek.WEDNESDAY, 6,
-            DayOfWeek.THURSDAY, 4,
-            DayOfWeek.FRIDAY, 5,
-            DayOfWeek.SATURDAY, 0,
-            DayOfWeek.SUNDAY, 0
-    );
-
-    private static final List<LocalDate> HOLIDAYS = Arrays.asList(
-            LocalDate.of(2023, 1, 1), // New year
-            LocalDate.of(2023, 12, 25), // Christmas
-            LocalDate.of(2023, 6, 11) // Job vacation day (for testing)
-    );
+    @Autowired
+    private Constant constant;
 
     @PostMapping("/planner")
     public ResponseEntity<Response> calculateStudySchedule(@RequestBody Request request) {
@@ -60,14 +45,14 @@ public class Controller {
 
         LocalDate thesisFinishDay = null;
         for (Day day : days) {
-            if (HOLIDAYS.contains(day.getDate())) {
+            if (constant.HOLIDAYS.contains(day.getDate())) {
                 day.setJobHours(0);
                 continue;
             }
 
-            day.setJobHours(JOB_HOURS_PER_DAY_OF_WEEK.get(day.getDate().getDayOfWeek()));
+            day.setJobHours(constant.JOB_HOURS_PER_DAY_OF_WEEK.get(day.getDate().getDayOfWeek()));
 
-            int freeHours = MAX_WORK_HOURS - day.getJobHours() - day.getOtherBusyHours();
+            int freeHours = constant.MAX_WORK_HOURS - day.getJobHours() - day.getOtherBusyHours();
             if (freeHours > 0) {
                 if (request.getThesisHoursNeeded() > freeHours) {
                     day.setThesisHours(freeHours);
