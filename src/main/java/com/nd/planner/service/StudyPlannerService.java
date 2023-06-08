@@ -14,13 +14,27 @@ public class StudyPlannerService {
 
     public Response calculateStudySchedule(Request request) {
 
+        // Validates the request for study schedule
         validateRequest(request);
 
         LocalDate startDate = request.getStartDate();
         LocalDate endDate = request.getDueDate();
 
-        Map<LocalDate, Day> dayMap = new HashMap<>();
+        // Creates the list of days between start and end date considering the busy days
+        List<Day> days = createDaysList(request, startDate, endDate);
 
+        // Sorts the days in ascending order
+        days.sort(Comparator.comparing(Day::getDate));
+
+        // Calculates the job and other busy hours for each day and the possible thesis finish day
+        LocalDate thesisFinishDay = calculateBusyHours(request, days);
+
+        // Creates the response with the study schedule and the message whether the thesis will be finished on time
+        return createResponse(request, days, thesisFinishDay);
+    }
+
+    private List<Day> createDaysList(Request request, LocalDate startDate, LocalDate endDate) {
+        Map<LocalDate, Day> dayMap = new HashMap<>();
         if (request.getBusyDays() != null) {
             for (Day busyDay : request.getBusyDays()) {
                 dayMap.put(busyDay.getDate(), busyDay);
@@ -33,9 +47,10 @@ public class StudyPlannerService {
             day.setDate(date);
             days.add(day);
         }
+        return days;
+    }
 
-        days.sort(Comparator.comparing(Day::getDate));
-
+    private LocalDate calculateBusyHours(Request request, List<Day> days) {
         LocalDate thesisFinishDay = null;
         for (Day day : days) {
             if (Constant.HOLIDAYS.contains(day.getDate())) {
@@ -58,36 +73,37 @@ public class StudyPlannerService {
                 }
             }
         }
+        return thesisFinishDay;
+    }
 
+    private Response createResponse(Request request, List<Day> days, LocalDate thesisFinishDay) {
         Response response = new Response();
-        if (request.getThesisHoursNeeded() > 0 || thesisFinishDay.isAfter(request.getDueDate())) {
+        if (request.getThesisHoursNeeded() > 0 || (thesisFinishDay != null && thesisFinishDay.isAfter(request.getDueDate()))) {
             response.setMessage("You will not finish your thesis on time :(");
         } else {
             response.setMessage("You will finish your thesis on time :) " + "Estimated day of finish: " + thesisFinishDay);
         }
         response.setDays(days);
-
         return response;
     }
 
     private void validateRequest(Request request) {
         LocalDate startDate = request.getStartDate();
         LocalDate endDate = request.getDueDate();
-        if(startDate.isAfter(endDate)) {
+        if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date must be before end date");
         }
 
-        if(request.getThesisHoursNeeded() <= 0) {
+        if (request.getThesisHoursNeeded() <= 0) {
             throw new IllegalArgumentException("Thesis hours needed must be greater than 0!");
         }
 
-        if(request.getBusyDays() != null) {
-            for(Day day : request.getBusyDays()) {
-                if(day.getOtherBusyHours() > Constant.MAX_WORK_HOURS) {
+        if (request.getBusyDays() != null) {
+            for (Day day : request.getBusyDays()) {
+                if (day.getOtherBusyHours() > Constant.MAX_WORK_HOURS) {
                     throw new IllegalArgumentException("Busy hours in a day must not exceed " + Constant.MAX_WORK_HOURS);
                 }
             }
         }
     }
 }
-
