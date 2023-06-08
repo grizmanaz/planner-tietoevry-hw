@@ -26,6 +26,6 @@ public class Constant {
     public static final List<LocalDate> HOLIDAYS = List.of(
             LocalDate.of(2023, 1, 1), // New year
             LocalDate.of(2023, 12, 25), // Christmas
-            LocalDate.of(2023, 6, 11) // Job vacation day
+            LocalDate.of(2023, 6, 11) // Job vacation day (for testing)
     );
 }
