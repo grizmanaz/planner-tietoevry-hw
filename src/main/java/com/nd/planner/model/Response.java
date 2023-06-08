@@ -14,11 +14,11 @@ public class Response {
         this.message = message;
     }
 
-    public List<Day> getBusyDays() {
+    public List<Day> getDays() {
         return days;
     }
 
-    public void setBusyDays(List<Day> days) {
+    public void setDays(List<Day> days) {
         this.days = days;
     }
 }

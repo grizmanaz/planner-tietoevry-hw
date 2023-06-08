@@ -4,8 +4,9 @@ import java.time.LocalDate;
 
 public class Day {
     private LocalDate date;
-    private int busyHours;
-    private int workingHours;
+    private int jobHours;
+    private int thesisHours;
+    private int otherBusyHours;
 
     public LocalDate getDate() {
         return date;
@@ -15,19 +16,27 @@ public class Day {
         this.date = date;
     }
 
-    public int getBusyHours() {
-        return busyHours;
+    public int getJobHours() {
+        return jobHours;
     }
 
-    public void setBusyHours(int busyHours) {
-        this.busyHours = busyHours;
+    public void setJobHours(int jobHours) {
+        this.jobHours = jobHours;
     }
 
-    public int getWorkingHours() {
-        return workingHours;
+    public int getThesisHours() {
+        return thesisHours;
     }
 
-    public void setWorkingHours(int workingHours) {
-        this.workingHours = workingHours;
+    public void setThesisHours(int thesisHours) {
+        this.thesisHours = thesisHours;
+    }
+
+    public int getOtherBusyHours() {
+        return otherBusyHours;
+    }
+
+    public void setOtherBusyHours(int otherBusyHours) {
+        this.otherBusyHours = otherBusyHours;
     }
 }

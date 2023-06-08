@@ -4,24 +4,25 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Request {
-    public int workHoursNeeded;
-    private List<Day> days;
+    private int thesisHoursNeeded;
+    private LocalDate startDate;
     private LocalDate dueDate;
+    private List<Day> busyDays;
 
-    public int getWorkHoursNeeded() {
-        return workHoursNeeded;
+    public int getThesisHoursNeeded() {
+        return thesisHoursNeeded;
     }
 
-    public void setWorkHoursNeeded(int workHoursNeeded) {
-        this.workHoursNeeded = workHoursNeeded;
+    public void setThesisHoursNeeded(int thesisHoursNeeded) {
+        this.thesisHoursNeeded = thesisHoursNeeded;
     }
 
-    public List<Day> getBusyDays() {
-        return days;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setBusyDays(List<Day> days) {
-        this.days = days;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
     public LocalDate getDueDate() {
@@ -30,5 +31,13 @@ public class Request {
 
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public List<Day> getBusyDays() {
+        return busyDays;
+    }
+
+    public void setBusyDays(List<Day> busyDays) {
+        this.busyDays = busyDays;
     }
 }
